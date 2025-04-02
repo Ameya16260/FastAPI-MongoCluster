@@ -4,7 +4,6 @@ import urllib.parse
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from contextlib import asynccontextmanager
-from pydantic import BaseModel
 username = urllib.parse.quote_plus('Ameya')
 password = urllib.parse.quote_plus('Ameya@mongo1234')
 @asynccontextmanager
@@ -25,8 +24,15 @@ async def shutdown_db_client(app):
     app.mongodb_client.close()
     print("Database disconnected.")
 app = FastAPI(lifespan=lifespan)
-@app.get("/ameya")
+@app.get("/allPass",response_model=list[Password])
 async def read_root():
     alldata = await app.mongodb["passwords"].find().to_list(length=None)  
-    return {"data": alldata}
+    return alldata
+@app.post("/savePass",response_model=Password)
+async def addPassword(pas:Password):
+    result = await app.mongodb["passwords"].insert_one(pas.model_dump())
+    savedPass= await app.mongodb["passwords"].find_one({"_id":result.inserted_id})
+    return savedPass
+    
+
 
