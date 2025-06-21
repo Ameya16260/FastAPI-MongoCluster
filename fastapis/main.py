@@ -42,6 +42,12 @@ async def addPassword(pas:Password):
     result = await app.mongodb["passwords"].insert_one(pas.model_dump())
     savedPass= await app.mongodb["passwords"].find_one({"_id":result.inserted_id})
     return savedPass
-    
+if __name__ == "__main__":
+    import uvicorn
+    import os
+
+    port = int(os.environ.get("PORT", 8000))  # Use Render's PORT env var or default to 8000 for local
+    uvicorn.run("fastapis.main:app", host="0.0.0.0", port=port)
+
 
 
