@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from model import Password
+from .model import Password
 import urllib.parse
 from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi.middleware.cors import CORSMiddleware
